@@ -1,14 +1,11 @@
-// src/apis/weather.ts
 import axios from "axios";
 import dotenv from "dotenv";
 import { WeatherResponse, WeatherResponseSchema } from "../types";
 dotenv.config();
 
-const apiKey = process.env.OPENWEATHER_API_KEY;
-
 export async function getWeatherByCity(city: string) {
   const res = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=72a85177bdbd744c204b23546c489a7a&units=metric`
   );
   const data: WeatherResponse = WeatherResponseSchema.parse(res.data);
 

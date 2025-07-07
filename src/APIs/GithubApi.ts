@@ -1,7 +1,6 @@
-// src/apis/github.ts
 import axios from "axios";
 import { z } from "zod";
-import { GitHubRepoSchema, GitHubUserSchema } from "../types";
+import { GitHubRepo, GitHubRepoSchema, GitHubUserSchema } from "../types";
 
 export async function getGitHubUser(username: string) {
   const res = await axios.get(`https://api.github.com/users/${username}`);
@@ -9,6 +8,24 @@ export async function getGitHubUser(username: string) {
 }
 
 export async function getGitHubRepos(username: string) {
-  const res = await axios.get(`https://api.github.com/users/${username}/repos`);
-  return z.array(GitHubRepoSchema).parse(res.data);
+  let allRepos: GitHubRepo[] = [];
+  let page = 1;
+  const perPage = 100;
+
+  while (true) {
+    const res = await axios.get(
+      `https://api.github.com/users/${username}/repos`,
+      {
+        params: { per_page: perPage, page },
+      }
+    );
+
+    const parsed = z.array(GitHubRepoSchema).parse(res.data);
+    allRepos = [...allRepos, ...parsed];
+
+    if (parsed.length < perPage) break; // No more pages
+    page++;
+  }
+
+  return allRepos;
 }

@@ -33,10 +33,17 @@ export async function getDeveloper(username: string): Promise<Developer> {
     totalStars: repos.reduce((acc, repo) => acc + repo.stargazers_count, 0),
   };
 
-  // Optional location/weather resolution
-  const rawLocation = user.location?.trim();
-  const location = rawLocation ? await getCountryInfo(rawLocation) : null;
-  const weather = location?.city ? await getWeatherByCity(location.city) : null;
+  const rawLocation = user.location;
+
+  let city = "";
+  let country = "";
+
+  if (typeof rawLocation === "string" && rawLocation.includes(",")) {
+    [city, country] = rawLocation.split(",").map((s) => s.trim());
+  }
+
+  const location = country ? await getCountryInfo(country) : null;
+  const weather = city ? await getWeatherByCity(city) : null;
 
   return {
     username: user.login,

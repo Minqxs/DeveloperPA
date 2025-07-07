@@ -21,10 +21,12 @@ export const DeveloperSchema = z.object({
     })
   ),
   blogPosts: z.array(
-    z.object({
-      title: z.string(),
-      body: z.string(),
-    })
+    z
+      .object({
+        title: z.string(),
+        body: z.string(),
+      })
+      .nullable()
   ),
   location: z
     .object({
