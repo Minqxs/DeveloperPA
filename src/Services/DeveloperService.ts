@@ -3,12 +3,16 @@ import { getCountryInfo } from "../APIs/CountriesApi";
 import { getGitHubUser, getGitHubRepos } from "../APIs/GithubApi";
 import { getWeatherByCity } from "../APIs/WeatherApi";
 
-import { Developer } from "../types";
+import { BlogPost, Developer, GitHubRepo, GitHubUser } from "../types";
 
 export async function getDeveloper(username: string): Promise<Developer> {
-  const user = await getGitHubUser(username);
-  const repos = await getGitHubRepos(username);
-  const blogPosts = await getBlogPosts();
+  const user: GitHubUser | null = await getGitHubUser(username);
+  const repos: GitHubRepo[] | null = await getGitHubRepos(username);
+  const blogPosts: BlogPost[] | null = await getBlogPosts();
+
+  if (!user) {
+    throw new Error(`Developer '${username}' not found on GitHub.`);
+  }
 
   const profile = {
     name: user.name,
@@ -19,21 +23,24 @@ export async function getDeveloper(username: string): Promise<Developer> {
     publicRepos: user.public_repos,
   };
 
-  const repositories = repos.map((repo) => ({
-    name: repo.name,
-    description: repo.description,
-    language: repo.language,
-    stars: repo.stargazers_count,
-    forks: repo.forks_count,
-    url: repo.html_url,
-  }));
+  const repositories = repos
+    ? repos.map((repo) => ({
+        name: repo.name,
+        description: repo.description,
+        language: repo.language,
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        url: repo.html_url,
+      }))
+    : [];
 
   const stats = {
-    totalRepos: repos.length,
-    totalStars: repos.reduce((acc, repo) => acc + repo.stargazers_count, 0),
+    totalRepos: repos?.length ?? 0,
+    totalStars:
+      repos?.reduce((acc, repo) => acc + repo.stargazers_count, 0) ?? 0,
   };
 
-  const rawLocation = user.location;
+  const rawLocation = user && user.location;
 
   let city = "";
   let country = "";

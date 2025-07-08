@@ -20,14 +20,16 @@ export const DeveloperSchema = z.object({
       url: z.string(),
     })
   ),
-  blogPosts: z.array(
-    z
-      .object({
-        title: z.string(),
-        body: z.string(),
-      })
-      .nullable()
-  ),
+  blogPosts: z
+    .array(
+      z
+        .object({
+          title: z.string(),
+          body: z.string(),
+        })
+        .nullable()
+    )
+    .nullable(),
   location: z
     .object({
       city: z.string().nullable(),

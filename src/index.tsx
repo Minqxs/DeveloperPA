@@ -9,12 +9,12 @@ const yoga = createYoga({
   graphqlEndpoint: "/graphql",
 });
 
-// Use yoga.fetch inside your Hono handler
+// Bring inside Hono handler
 app.all("/graphql", async (c) => {
   return await yoga.fetch(c.req.raw);
 });
 
 serve({
   fetch: app.fetch,
-  port: 3000,
+  port: 3000, // http:localhost:3000
 });
