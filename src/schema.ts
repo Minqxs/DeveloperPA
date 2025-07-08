@@ -81,20 +81,19 @@ const resolvers = {
       { username, limit }: { username: string; limit: number }
     ) => {
       const repos = await getGitHubRepos(username);
-      return (
-        repos &&
-        repos
-          .sort((a, b) => b.stargazers_count - a.stargazers_count)
-          .slice(0, limit)
-          .map((repo) => ({
-            name: repo.name,
-            description: repo.description,
-            language: repo.language,
-            stars: repo.stargazers_count,
-            forks: repo.forks_count,
-            url: repo.html_url,
-          }))
-      );
+      return repos
+        ? repos
+            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+            .slice(0, limit)
+            .map((repo) => ({
+              name: repo.name,
+              description: repo.description,
+              language: repo.language,
+              stars: repo.stargazers_count,
+              forks: repo.forks_count,
+              url: repo.html_url,
+            }))
+        : null;
     },
     gitHubRepos: async (_: any, { username }: { username: string }) => {
       return await getGitHubRepos(username);
